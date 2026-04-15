@@ -2,6 +2,18 @@
 
 A full-stack Battleship game with a React/TypeScript frontend and a Python FastAPI backend. Game state is persisted in Redis so sessions survive page refreshes.
 
+**Live**: https://battleship-rust-six.vercel.app
+
+---
+
+## Hosting
+
+| Piece    | Where                                | Notes |
+|----------|--------------------------------------|-------|
+| Frontend | [Vercel](https://vercel.com)         | Auto-deploys from `frontend/` on push to `main`. `REACT_APP_API_BASE` env var points at the Render backend. |
+| Backend  | [Render](https://render.com) (free)  | Docker web service built from `backend/Dockerfile`. Reads `REDIS_URL` and `ALLOWED_ORIGINS` from env. Free dynos sleep after 15 min idle — first request after a cold start takes ~30s. |
+| Redis    | [Upstash](https://upstash.com) (free)| Serverless Redis. Connection string is a `rediss://` (TLS) URL passed to Render as `REDIS_URL`. |
+
 ---
 
 ## Project Layout

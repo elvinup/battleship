@@ -134,6 +134,33 @@ export function lobbyRematch(lobbyId: string): Promise<ApiLobbyState> {
   return request<ApiLobbyState>(`/api/lobby/${lobbyId}/rematch`, { method: 'POST' });
 }
 
+// ── Move history (Redis Streams) ────────────────────────────────────────────
+
+export interface MoveEntry {
+  id: string;
+  ts_ms: number;
+  /** "player" | "ai" | "player1" | "player2" */
+  actor: string;
+  /** Stream values come back as strings — parse before rendering. */
+  row: string;
+  col: string;
+  hit: string;
+  /** "miss" | "hit" | "win" */
+  result: string;
+}
+
+export function getGameMoves(gameId: string): Promise<MoveEntry[]> {
+  return request<{ game_id: string; moves: MoveEntry[] }>(
+    `/api/game/${gameId}/moves`,
+  ).then(r => r.moves);
+}
+
+export function getLobbyMoves(lobbyId: string): Promise<MoveEntry[]> {
+  return request<{ lobby_id: string; moves: MoveEntry[] }>(
+    `/api/lobby/${lobbyId}/moves`,
+  ).then(r => r.moves);
+}
+
 export function lobbyFire(
   lobbyId: string,
   player: 1 | 2,

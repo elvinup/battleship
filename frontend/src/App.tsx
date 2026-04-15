@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Board, { FiredCell } from './Board';
 import ShipSelector, { GameMode, GamePhase } from './ShipSelector';
 import LobbyPopup from './LobbyPopup';
+import MoveLog from './MoveLog';
 import { SHIP_TYPES, ShipType, PlacedShip, Orientation, isValidPlacement } from './types';
 import {
   newGame, fireAt, getGame, ApiGameState, ApiPlacedShip,
@@ -418,6 +419,19 @@ export default function App() {
         <div className={`game-banner ${winnerIsMe ? 'win' : 'lose'}`}>
           {winnerBanner}
         </div>
+      )}
+
+      {spFinished && gameState && (
+        <MoveLog source={{ kind: 'game', gameId: gameState.game_id }} />
+      )}
+      {mpFinished && lobbyState && playerNumber && (
+        <MoveLog
+          source={{
+            kind: 'lobby',
+            lobbyId: lobbyState.lobby_id,
+            playerNumber,
+          }}
+        />
       )}
 
       {turnBanner && <div className="turn-banner">{turnBanner}</div>}

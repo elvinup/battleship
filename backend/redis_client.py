@@ -74,3 +74,39 @@ def load_lobby(lobby_id: str) -> Optional[LobbyState]:
     if data is None:
         return None
     return LobbyState.model_validate_json(data)
+
+
+# ── Move history (Redis Streams) ───────────────────────────────────────────────
+#
+# Each game/lobby has an append-only stream of moves at:
+#   game:{game_id}:moves        (single-player)
+#   lobby:{lobby_id}:moves      (multiplayer)
+#
+# Stream entry IDs are server-assigned (`<ms>-<seq>`), so the timestamp comes
+# for free and entries can be range-queried by time with XRANGE.
+
+def append_move(stream_key: str, ttl_seconds: int, **fields) -> None:
+    """Append one move to a stream and refresh its TTL."""
+    payload = {k: str(v) for k, v in fields.items()}
+
+    def op():
+        client = get_client()
+        client.xadd(stream_key, payload)
+        client.expire(stream_key, ttl_seconds)
+
+    _exec(op)
+
+
+def read_moves(stream_key: str) -> list[dict]:
+    """Return all moves in chronological order. Each entry includes its ms timestamp."""
+    entries = _exec(lambda: get_client().xrange(stream_key))
+    out: list[dict] = []
+    for entry_id, fields in entries:
+        ts_ms = int(entry_id.split("-")[0])
+        out.append({"id": entry_id, "ts_ms": ts_ms, **fields})
+    return out
+
+
+def clear_moves(stream_key: str) -> None:
+    """Drop the stream entirely (used on rematch to start a fresh history)."""
+    _exec(lambda: get_client().delete(stream_key))
