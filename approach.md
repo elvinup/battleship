@@ -32,6 +32,8 @@ The obvious next step is making the Redis layer highly available. Sentinel for f
 
 A few other things I'd want next: real authentication so players can't impersonate each other or inspect opponent state via the API and WebSockets to replace the 2-second polling loop.
 
+Also I would've liked to lean into my infra capabilities by deploying the app and required infra like an EC2 and redis instance with Terraform, making it easy to deploy in any region as required in AWS, but was strapped for time before focusing on more interviews rest of this week.
+
 ## Considerations
 
 A player can cheat by checking the Network tab and snooping on API calls to see the matrix of the enemy's list. This should be information purely on server side rather than on the client side.
