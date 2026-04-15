@@ -5,7 +5,7 @@
 
 import { PlacedShip } from './types';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = process.env.REACT_APP_API_BASE ?? 'http://localhost:8000';
 
 // ── Wire types (snake_case from Python backend) ────────────────────────────
 

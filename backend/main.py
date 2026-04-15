@@ -1,6 +1,7 @@
 """FastAPI application — Battleship backend."""
 from __future__ import annotations
 
+import os
 import uuid
 
 from fastapi import FastAPI, HTTPException, Request
@@ -24,9 +25,12 @@ async def redis_unavailable_handler(request: Request, exc: RedisUnavailableError
     return JSONResponse(status_code=503, content={"detail": str(exc)})
 
 
+_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000")
+ALLOWED_ORIGINS = [o.strip() for o in _origins_env.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
