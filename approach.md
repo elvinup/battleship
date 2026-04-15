@@ -31,3 +31,10 @@ The other half of the spike is keeping things organized and simple while still h
 The obvious next step is making the Redis layer highly available. Sentinel for failover, or a Cluster setup for horizontal scale could've been a nice touch. I scoped that out and decided it was overkill for the time I'd already invested. 
 
 A few other things I'd want next: real authentication so players can't impersonate each other or inspect opponent state via the API and WebSockets to replace the 2-second polling loop.
+
+## Considerations
+
+A player can cheat by checking the Network tab and snooping on API calls to see the matrix of the enemy's list. This should be information purely on server side rather than on the client side.
+
+If the game was a huge board, these would be the slow downs. Checking wins requires scanning all cells each time, which can be reduced from N^2 tto O(N) if we just decrement the ship cells left until 0. Another efficiency to improve would be the AI scanning for a spot to hit being N^2 which could be reduced with a set of available cells and removing them as they're taken, having to randomly choose what's left in the set rather than the whole board.
+
