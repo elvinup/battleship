@@ -1,0 +1,76 @@
+.board-wrapper {
+  display: inline-block;
+}
+
+.board-grid {
+  display: grid;
+  grid-template-columns: 28px repeat(10, 44px);
+  grid-template-rows: 28px repeat(10, 44px);
+  gap: 2px;
+}
+
+.label-corner,
+.label-col,
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+  user-select: none;
+}
+
+.cell {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 3px;
+  cursor: default;
+  transition: background 0.1s;
+}
+
+.cell.occupied {
+  background: #3b82f6;
+  border-color: #2563eb;
+}
+
+.cell.preview-valid {
+  background: rgba(59, 130, 246, 0.45);
+  border-color: #60a5fa;
+  cursor: pointer;
+}
+
+.cell.preview-invalid {
+  background: rgba(239, 68, 68, 0.45);
+  border-color: #f87171;
+  cursor: not-allowed;
+}
+
+.cell.hit {
+  background: #ef4444;
+  border-color: #b91c1c;
+}
+
+.cell.miss {
+  background: #1e293b;
+  border-color: #475569;
+  position: relative;
+}
+
+.cell.miss::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #475569;
+}
+
+.cell.fire-hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #f87171;
+  cursor: crosshair;
+}

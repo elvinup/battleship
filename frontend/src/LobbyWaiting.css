@@ -1,0 +1,102 @@
+.lobby-waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 40px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  min-width: 300px;
+  text-align: center;
+}
+
+.lw-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.lw-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.lw-id-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #0f172a;
+  border: 2px solid #3b82f6;
+  border-radius: 10px;
+  padding: 12px 20px;
+}
+
+.lw-id-code {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: #60a5fa;
+  font-family: monospace;
+}
+
+.lw-copy-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #475569;
+  background: #1e293b;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s;
+}
+
+.lw-copy-btn:hover {
+  background: #334155;
+  color: #e2e8f0;
+}
+
+.lw-spinner-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lw-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid #334155;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: lw-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes lw-spin {
+  to { transform: rotate(360deg); }
+}
+
+.lw-waiting-text {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.lw-cancel-btn {
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: 1px solid #ef4444;
+  background: transparent;
+  color: #f87171;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.lw-cancel-btn:hover {
+  background: #2d1b1b;
+}
