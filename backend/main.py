@@ -197,6 +197,8 @@ def lobby_rematch(lobby_id: str) -> LobbyState:
     state = load_lobby(lobby_id)
     if state is None:
         raise HTTPException(status_code=404, detail="Lobby not found")
+    if state.status == LobbyStatus.rematching:
+        return state
     if state.status != LobbyStatus.finished:
         raise HTTPException(status_code=400, detail="Game is not finished yet")
 

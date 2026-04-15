@@ -119,13 +119,17 @@ export default function App() {
   useEffect(() => {
     if (pollRef.current) clearInterval(pollRef.current);
     if (!lobbyState || gameMode !== 'multi') return;
-    if (lobbyState.status === 'finished') return;
 
     pollRef.current = setInterval(async () => {
       try {
         const fresh = await getLobby(lobbyState.lobby_id);
         setLobbyState(fresh);
-        if (fresh.status === 'playing' && gamePhase !== 'playing') {
+        if (
+          fresh.status === 'playing' &&
+          gamePhase === 'placement' &&
+          fresh.player1_ships &&
+          fresh.player2_ships
+        ) {
           const myShips = playerNumber === 1 ? fresh.player1_ships : fresh.player2_ships;
           if (myShips) setPlacedShips(apiShipsToLocal(myShips));
           setIsLobbyWaiting(false);
@@ -249,23 +253,43 @@ export default function App() {
 
   // ── Rematch ───────────────────────────────────────────────────────────────
   async function handleRematch() {
-    setLoading(true);
-    setError(null);
-    try {
-      if (gameMode === 'multi' && lobbyState) {
-        // Transition lobby to rematching — both players re-place ships
-        const state = await lobbyRematch(lobbyState.lobby_id);
-        setLobbyState(state);
-        setPlacedShips([]);
-        localStorage.removeItem(PLACEMENT_KEY);
-        setGamePhase('placement');
-        setIsPlayer2Placing(true);
-      } else if (gameState) {
-        // Start a new AI game with the same ship placement
+    if (gameMode !== 'multi' || !lobbyState) {
+      // Single-player rematch — start a new AI game with the same placement
+      if (!gameState) return;
+      setLoading(true);
+      setError(null);
+      try {
         const state = await newGame('single', placedShips);
         localStorage.setItem(GAME_ID_KEY, state.game_id);
         setGameState(state);
+      } catch (e: any) {
+        setError(e.message ?? 'Failed to start rematch');
+      } finally {
+        setLoading(false);
       }
+      return;
+    }
+
+    // Multiplayer rematch — kill polling first to avoid stale-closure races,
+    // then synchronously reset placement state BEFORE awaiting the backend.
+    if (pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+
+    setPlacedShips([]);
+    setSelectedShip(null);
+    setOrientation('horizontal');
+    localStorage.removeItem(PLACEMENT_KEY);
+    setGamePhase('placement');
+    setIsPlayer2Placing(true);
+    setIsLobbyWaiting(false);
+
+    setLoading(true);
+    setError(null);
+    try {
+      const state = await lobbyRematch(lobbyState.lobby_id);
+      setLobbyState(state);
     } catch (e: any) {
       setError(e.message ?? 'Failed to start rematch');
     } finally {
